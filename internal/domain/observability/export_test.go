@@ -187,7 +187,8 @@ func TestStreamExportCallLogsBoundsBatchesWithOverallDeadline(t *testing.T) {
 	if !ok {
 		t.Fatal("export batch query must run under a deadline-bounded context")
 	}
-	if ceiling := start.Add(callLogExportMaxDuration); deadline.After(ceiling) {
+	// start 与导出内部取时间之间存在调度延迟，允许 1 秒漂移，避免把时钟前进误判为超限。
+	if ceiling := start.Add(callLogExportMaxDuration + time.Second); deadline.After(ceiling) {
 		t.Fatalf("export deadline %v exceeds the overall cap %v", deadline, ceiling)
 	}
 	if floor := start.Add(9 * time.Minute); deadline.Before(floor) {
