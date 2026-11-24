@@ -1,0 +1,15 @@
+# Opt-in MySQL 8.0 profile for a SHARED 2-core/2-GiB application host.
+# Merge into the existing server configuration; measure RSS/IOPS before rollout.
+# Do not restart MySQL or override an existing larger-server config automatically.
+[mysqld]
+innodb_buffer_pool_size=512M
+max_connections=40
+thread_cache_size=8
+table_open_cache=400
+tmp_table_size=16M
+max_heap_table_size=16M
+temptable_max_ram=64M
+innodb_file_per_table=ON
+# Preserve durable billing commits. Never disable redo/fsync to claim higher QPS.
+innodb_flush_log_at_trx_commit=1
+sync_binlog=1

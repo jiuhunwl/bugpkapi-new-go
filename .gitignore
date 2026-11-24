@@ -1,0 +1,57 @@
+# ============================================================
+# BugPk-Api 后端（jiuhunwl/bugpkapi-new-go）
+# ============================================================
+
+# ---------- 本地配置与密钥（绝不入库）----------
+configs/config.yaml
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+
+# ---------- Go 构建与测试产物 ----------
+bin/
+*.exe
+*.test
+coverage.out
+.gocache/
+.gocache-race/
+
+# Go 工具链在包目录下误建的 telemetry 计数器（GOTELEMETRY/GOCACHE 目录解析为空时落到 CWD）
+**/null/go/telemetry/
+
+# ---------- 发布与打包产物 ----------
+release/
+*.tar.gz
+*.zip
+compressed
+/full/
+.tmp-pkg/
+
+# ---------- 本机临时/扫描脚本与备份 ----------
+*.bak-*
+_*scan*.cjs
+
+# ---------- 运行期日志、上传与本地数据 ----------
+logs/
+*.log
+*.jsonl
+tmp/
+.tmp/
+uploads/
+data/*.xdb
+dump.rdb
+
+# ---------- 本机验证脚本残留 ----------
+_test_*.ps1
+.golangci.toml
+
+# ---------- IDE 与系统文件 ----------
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

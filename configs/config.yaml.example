@@ -1,0 +1,208 @@
+app:
+  name: BugPk-Api
+  # Allowed: development, test, staging, production (dev/testing/stage/prod aliases are accepted).
+  # staging and production both enforce production-grade secrets, cookies, database credentials, and bootstrap password.
+  env: development
+
+server:
+  host: 0.0.0.0
+  port: 8080
+  readTimeout: 10s
+  writeTimeout: 30s
+  idleTimeout: 120s
+  # Grace period for in-flight requests during SIGINT/SIGTERM shutdown.
+  shutdownTimeout: 30s
+  # Allowed startup range: 3 MiB to 64 MiB.
+  # The 4 MiB default permits 2 MiB images and a negotiated 3 MiB ticket attachment.
+  # Ticket limits reserve multipart headroom and are returned by /tickets/attachment-policy.
+  # Set at least 11 MiB (11534336 bytes) to permit 10 MiB ticket attachments.
+  # Increase this global envelope only for a documented endpoint requirement.
+  maxRequestBodySize: 4194304
+  # Empty means X-Forwarded-For/X-Real-IP are ignored and the TCP peer IP is used.
+  # Add only reverse proxies controlled by this deployment, for example: ["127.0.0.1", "10.0.0.0/8"].
+  # Whole-family CIDRs such as 0.0.0.0/0 and ::/0 are rejected because they allow direct clients to spoof their IP.
+  trustedProxies: []
+
+api:
+  # System APIs must stay outside /api/{apiCode}.
+  systemPrefix: /system-api
+
+frontend:
+  # Go 服务可直接托管前端 dist；启用后无需为 /api、/system-api 分别配置 Nginx location。
+  # 若使用独立 Nginx 静态站点，可设为 false。
+  enabled: true
+  distPath: frontend/dist
+
+database:
+  host: localhost
+  port: 3306
+  name: bugpk_api
+  # 生产环境请改用 DB_USER / DB_PASSWORD 环境变量注入，不要提交真实口令。
+  user: bugpk
+  password: change-me
+  ssl: false
+  # Required before startup/migration writes: target-bound acknowledgement of UTC+08:00 data.
+  # Obtain the fingerprint with the read-only procedure described in the docs repository.
+  # Never auto-fill for unreviewed data; stop/drain all UTC legacy writers first.
+  timezoneDataConfirmation: ""
+  # Max open: 1-2000. Max idle must not exceed max open.
+  maxOpenConns: 100
+  maxIdleConns: 50
+  connMaxLifetime: 30m
+  connMaxIdleTime: 5m
+  # Bound network stalls so saturated or half-open MySQL connections cannot pin requests indefinitely.
+  dialTimeout: 5s
+  readTimeout: 15s
+  writeTimeout: 15s
+
+analytics:
+  # Dashboard metrics are incrementally rolled up from the append-only call log.
+  # Keep enabled in production; raw logs remain available for audit/detail pages.
+  enabled: true
+  # Rows claimed per transaction. Tune between 100 and 20000 for the database host.
+  batchSize: 5000
+  # Delay between incremental passes; the worker immediately continues while backlog exists.
+  pollInterval: 1s
+  # Interval to refresh overview snapshot (risk fingerprint aggregation).
+  # Recommended: 5m to avoid frequent large-window queries.
+  overviewRefreshInterval: 5m
+  # Time window (in minutes) for overview snapshot queries.
+  # Recommended: 60 (1 hour) to balance freshness and query cost.
+  overviewSnapshotWindowMinutes: 60
+  # Per-environment secret for IP de-identification hashing (rollup/risk/audit
+  # tables). Leave EMPTY to keep the historical public prefix byte-for-byte
+  # (zero behavior change). Once set, the grouping key rotates: affected rollup
+  # tables must be rebuilt per the delivery notes, and the secret must NOT be
+  # removed afterwards. Can also be provided via ANALYTICS_IP_HASH_SECRET.
+  # Production recommendation: random >=32 bytes.
+  ipHashSecret: ""
+
+redis:
+  host: localhost
+  port: 6379
+  password: ""
+  database: 0
+  # Pool size: 1-5000. Min idle must not exceed pool size.
+  poolSize: 256
+  minIdleConns: 32
+  maxRetries: 2
+  poolTimeout: 2s
+  dialTimeout: 2s
+  readTimeout: 2s
+  writeTimeout: 2s
+
+migration:
+  # true=启动自动执行 migrations（默认）；false=跳过迁移（已手动导入全量 SQL 时务必设 false）
+  enabled: true
+  path: migrations
+
+auth:
+  issuer: BugPk-Api
+  # Development placeholder only. Override with JWT_SECRET in production.
+  secret: change-me-dev-only-bugpk-api-jwt-secret-32-bytes
+  # Required in EVERY environment to create the initial admin or retire a published default password.
+  # Existing custom passwords are not overwritten. Do not reuse published development defaults.
+  initialAdminPassword: ""
+  accessTokenTTL: 30m
+  refreshTokenTTL: 168h
+  # 多标签页并发刷新的宽限窗口：窗口内同一 refresh token 重复使用只补发
+  # access token，不再二次轮换。0 表示关闭（退化为严格单次消费）。
+  refreshRotationGrace: 60s
+  refreshCookieName: REFRESH_TOKEN
+  refreshCookieSecure: false
+  # Production supports Lax or Strict. None is rejected without an explicit CSRF protocol.
+  refreshCookieSameSite: Lax
+
+oauth:
+  # Only enable for local integration tests with an httptest provider.
+  allowPrivateEndpoints: false
+  httpTimeout: 10s
+
+captcha:
+  # Fallback when no enabled per-scene row exists. Manage scene-specific
+  # POW/GeeTest v4/Cloudflare Turnstile settings in /system/captcha-config.
+  defaultProvider: pow
+  # Captcha state is single-use and must remain short-lived (30s-10m).
+  ttl: 5m
+  powDifficulty: 3
+
+message:
+  email:
+    provider: smtp
+    enabled: false
+    codeTTL: 10m
+    smtpHost: ""
+    smtpPort: 587
+    smtpUsername: ""
+    smtpPassword: ""
+    smtpFrom: ""
+    smtpFromName: BugPk-Api
+    smtpTLS: true
+    smtpTimeout: 10s
+    # 邮件模板语言跟随浏览器 Accept-Language：
+    # zh/其它/未携带 → 默认模板（中文）；en → 下方 *En 英文模板，En 为空时回退默认模板。
+    # 占位符均支持 {{code}} / {{minutes}} / {{siteName}}。
+    codeSubject: BugPk-Api 验证码
+    codeTemplate: "您的验证码是 {{code}}，{{minutes}} 分钟内有效。如非本人操作，请忽略本邮件。"
+    resetSubject: BugPk-Api 找回密码验证码
+    resetTemplate: "您正在找回密码，验证码是 {{code}}，{{minutes}} 分钟内有效。如非本人操作，请忽略本邮件。"
+    codeSubjectEn: BugPk-Api verification code
+    codeTemplateEn: "Your verification code is {{code}} and is valid for {{minutes}} minutes. Ignore this email if you did not request it."
+    resetSubjectEn: BugPk-Api password reset code
+    resetTemplateEn: "Your password reset code is {{code}} and is valid for {{minutes}} minutes. Ignore this email if you did not request it."
+    # 全站发信熔断：注册/绑定/找回密码共用一个计数器，防止被刷爆 SMTP 日额度
+    # 导致正常用户收不到验证码。0 表示使用内置默认值 30/分钟、300/小时。
+    sendGlobalMinuteLimit: 30
+    sendGlobalHourLimit: 300
+  sms:
+    provider: ""
+    enabled: false
+    codeTTL: 10m
+
+network:
+  # Keep false for public upstreams. Enable only when API nodes intentionally live on trusted private networks.
+  allowPrivateUpstreams: false
+  # Fixed public endpoint used only by the server to verify configured proxy egress.
+  proxyTestUrl: https://api.ipify.org?format=json
+
+ipRegion:
+  enabled: true
+  # 默认数据源：ipwho.is（免费、HTTPS、含经纬度）。也可用 bilibili/tencent-map/amap/ip2region。
+  # Bilibili 返回格式为 data.addr/country/province/city/isp/latitude/longitude；
+  # 选择 provider=bilibili 时会校验 data.addr 与请求 IP 一致，失败自动回退 HTTPS 数据源。
+  # 生产环境建议通过后台「系统设置-IP数据源」配置自定义源（无需改代码）。
+  provider: ip-api
+  timeout: 5s
+  cacheTTL: 24h
+  ip2regionV4Path: data/ip2region_v4.xdb
+  ip2regionV6Path: data/ip2region_v6.xdb
+  ipApiEndpoint: https://ipwho.is/{ip}?lang=zh-CN
+  bilibiliEndpoint: https://api.live.bilibili.com/ip_service/v1/ip_service/get_ip_addr
+  tencentMapKey: ""
+  tencentMapEndpoint: https://apis.map.qq.com/ws/location/v1/ip
+  amapKey: ""
+  amapEndpoint: https://restapi.amap.com/v3/ip
+  ignoreProviderErrorInLog: true
+
+payment:
+  # Required for encrypting Alipay private keys stored in DB.
+  # Override with PAYMENT_CONFIG_SECRET in production.
+  configSecret: ""
+
+system:
+  # Encrypts SMTP authorization codes, SMS secrets, and QQ AppKey values stored in DB.
+  # Override with SYSTEM_CONFIG_SECRET. If blank, PAYMENT_CONFIG_SECRET is used as a fallback.
+  configSecret: ""
+
+cors:
+  # 仅用于明确允许跨源的非会话接口；不提供浏览器跨源登录支持。
+  # 登录、刷新与退出应经前端同源反向代理，VITE_GLOB_API_URL 保持 /system-api。
+  # 前后端部署在不同机器时也保持浏览器同源，默认无需设置本列表。
+  # 每个条目必须是完整 Origin；* 不允许凭据，也不会绕过同源会话保护。
+  # 可用 CORS_ALLOWED_ORIGINS 覆盖（逗号分隔）；留空不启用跨源响应头。
+  allowed_origins: []
+
+seo:
+  # 站点对外基础地址（用于动态 sitemap.xml 的绝对 URL，不含结尾斜杠；留空则 sitemap 接口回退请求 Host）
+  # 也可用环境变量 SEO_SITE_URL 覆盖
+  siteUrl: ""

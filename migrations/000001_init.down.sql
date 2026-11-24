@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS `bp_auth_refresh_token_audit`;
+DROP TABLE IF EXISTS `bp_user_specified_response`;
+DROP TABLE IF EXISTS `bp_message_provider_config`;
+DROP TABLE IF EXISTS `bp_auth_mobile_code`;
+DROP TABLE IF EXISTS `bp_auth_email_code`;
+DROP TABLE IF EXISTS `bp_captcha_provider_config`;
+DROP TABLE IF EXISTS `bp_auth_register_config`;
+DROP TABLE IF EXISTS `bp_user_role`;
+DROP TABLE IF EXISTS `bp_role`;
+DROP TABLE IF EXISTS `bp_user`;

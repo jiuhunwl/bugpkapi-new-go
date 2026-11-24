@@ -1,0 +1,2 @@
+ALTER TABLE bp_payment_order DROP INDEX idx_bp_payment_order_chain_window;
+ALTER TABLE bp_payment_trc20_config DROP COLUMN retry_cursor_id;

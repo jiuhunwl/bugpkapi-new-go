@@ -1,0 +1,3 @@
+DELETE FROM `bp_role_menu` WHERE `menu_id` BETWEEN 900110 AND 900111;
+DELETE FROM `bp_menu` WHERE `id` BETWEEN 900110 AND 900111;
+DROP TABLE IF EXISTS `bp_auth_session_config`;
