@@ -1,5 +1,7 @@
 # BugPk-Api 后端
 
+[![CI](https://github.com/jiuhunwl/bugpkapi-new-go/actions/workflows/ci.yml/badge.svg)](https://github.com/jiuhunwl/bugpkapi-new-go/actions/workflows/ci.yml)
+
 [简体中文](README.md) · [English](README_EN.md)
 
 开源的**开放 API 服务平台**后端，基于 Go + [Hertz](https://github.com/cloudwego/hertz)，采用 DDD 分层架构。提供管理后台接口、开放 API 网关、接口与分组、计费与套餐、订单与支付、风控与审计、工单与内容运营等能力。
@@ -105,6 +107,10 @@ frontend:
   enabled: true
   distPath: frontend/dist
 ```
+
+## 贡献
+
+开发环境、数据库变更规则与提交约定见 [CONTRIBUTING.md](./CONTRIBUTING.md)。安全问题请按 [SECURITY.md](./SECURITY.md) 私下报告。
 
 ## 许可证
 

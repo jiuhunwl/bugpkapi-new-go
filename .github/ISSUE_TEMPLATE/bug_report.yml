@@ -1,0 +1,56 @@
+name: Bug 报告
+description: 报告可复现的后端问题
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请先搜索已有 Issue。**不要**粘贴密钥、真实用户数据、支付凭据或未修复漏洞的细节；安全问题请按 `SECURITY.md` 私下报告。
+  - type: input
+    id: version
+    attributes:
+      label: 版本
+      description: Release 版本、tag 或 commit
+      placeholder: v1.2.113 / 124c5e2
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 运行环境
+      description: 操作系统、MySQL / Redis 版本、部署方式
+      placeholder: Ubuntu 24.04 / MySQL 8.0.40 / Redis 7.2 / 二进制 + Nginx
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. 配置 ...
+        2. 请求 ...
+        3. 观察到 ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际结果
+      description: 包含错误码与响应体（请脱敏）
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 相关日志
+      description: 请先移除令牌、IP、邮箱、订单号等敏感信息
+      render: shell
+    validations:
+      required: false

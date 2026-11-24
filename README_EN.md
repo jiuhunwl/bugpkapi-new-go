@@ -1,5 +1,7 @@
 # BugPk-Api Backend
 
+[![CI](https://github.com/jiuhunwl/bugpkapi-new-go/actions/workflows/ci.yml/badge.svg)](https://github.com/jiuhunwl/bugpkapi-new-go/actions/workflows/ci.yml)
+
 [简体中文](README.md) · [English](README_EN.md)
 
 Open-source backend for an **API-as-a-Service platform**, built in Go with [Hertz](https://github.com/cloudwego/hertz) and a DDD layout. It powers the admin API, the open API gateway, APIs and groups, billing and plans, orders and payments, risk control and audit, tickets, and content operations.
@@ -105,6 +107,10 @@ frontend:
   enabled: true
   distPath: frontend/dist
 ```
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the development environment, database change rules, and commit conventions. Report security issues privately as described in [SECURITY.md](./SECURITY.md).
 
 ## License
 
