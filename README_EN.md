@@ -12,7 +12,7 @@ Open-source backend for an **API-as-a-Service platform**, built in Go with [Hert
 | --- | --- |
 | **bugpkapi-new-go** (this repo) | Backend service (Go + MySQL + Redis), AGPL-3.0 |
 | [bugpkapi-new-vue](https://github.com/jiuhunwl/bugpkapi-new-vue) | Frontend (Vue 3 + Vben Admin), MIT |
-| [bugpkapi-new-docs](https://github.com/jiuhunwl/bugpkapi-new-docs) | Documentation, architecture and deployment guides |
+| [bugpkapi-new-docs](https://github.com/jiuhunwl/bugpkapi-new-docs/blob/main/README_EN.md) | Documentation, architecture and deployment guides |
 
 ## Features
 
