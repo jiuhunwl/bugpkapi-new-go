@@ -4,6 +4,8 @@
 
 [简体中文](README.md) · [English](README_EN.md)
 
+[![LINUX DO](https://img.shields.io/badge/LINUX%20DO-%E7%A4%BE%E5%8C%BA-1f6feb?logo=discourse&logoColor=white)](https://linux.do) 本项目在 [LINUX DO](https://linux.do) 社区分享。
+
 开源的**开放 API 服务平台**后端，基于 Go + [Hertz](https://github.com/cloudwego/hertz)，采用 DDD 分层架构。提供管理后台接口、开放 API 网关、接口与分组、计费与套餐、订单与支付、风控与审计、工单与内容运营等能力。
 
 | 仓库 | 说明 |

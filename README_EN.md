@@ -4,6 +4,8 @@
 
 [简体中文](README.md) · [English](README_EN.md)
 
+[![LINUX DO](https://img.shields.io/badge/LINUX%20DO-community-1f6feb?logo=discourse&logoColor=white)](https://linux.do) This project is shared with the [LINUX DO](https://linux.do) community.
+
 Open-source backend for an **API-as-a-Service platform**, built in Go with [Hertz](https://github.com/cloudwego/hertz) and a DDD layout. It powers the admin API, the open API gateway, APIs and groups, billing and plans, orders and payments, risk control and audit, tickets, and content operations.
 
 | Repository | Description |
